@@ -40,6 +40,12 @@
       #lcdCanvas {
         align-self: center;
         width: 100%;
+        /* IE, only works on <img> tags */
+        -ms-interpolation-mode: nearest-neighbor;
+        /* Firefox */
+        image-rendering: crisp-edges;
+        /* Chromium + Safari */
+        image-rendering: pixelated;
       }
       #calcContainer {
         margin: auto;
@@ -235,7 +241,7 @@
         
         // run the rpl thread
         const rpnThread = setInterval(()=>{
-          console.log("run_rpl",Module.run_rpl());
+          Module.run_rpl();
         }, 100);
 
         // both threads should run on a requestAnimationFrame() - future use
