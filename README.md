@@ -1,5 +1,7 @@
 # DB48X for WASM
 
+[Try the simulator in your browser](https://raw.githack.com/sunpazed/db48x-wasm/master/bin/index.html)
+
 ## About
 This is a fork/variation of the excellent [db48x](https://github.com/c3d/db48x) simulator written by 
 Christophe de Dinechin for the [SwissMicro DM42](https://www.swissmicros.com/product/dm42) calculator.
