@@ -8,6 +8,8 @@ Christophe de Dinechin for the [SwissMicro DM42](https://www.swissmicros.com/pro
 This code is a proof-of-concept, is provided as-is, and is likely out of date. As such, this code is not 
 supported by Christophe — please refer to the original repository.
 
+(Update by Christophe: Yes it is! This is insanely great stuff!)
+
 ## WASM simulator
 The simulator implementation of db48x utilises Qt which runs fairly sluggishly on low resource devices 
 such as handhelds. The motivation is to port the simulator from Qt to something more portable such as
