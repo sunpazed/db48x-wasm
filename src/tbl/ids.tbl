@@ -1,0 +1,1318 @@
+// ****************************************************************************
+//  ids.tbl                                                      DB48X project
+// ****************************************************************************
+//
+//   File Description:
+//
+//     List of all IDs for RPL opcodes
+//
+//      ID(i)      defines an ID that is not parseable as a command, e.g. types
+//      CMD(i)     defines an ID that is parseable as a command, e.g. "drop"
+//      OP(i,n)    defines an operator ID, e.g. "+"
+//      NAMED(i,l) defines an ID with an alternate long spelling, e.g. dup
+//
+//
+//
+//
+// ****************************************************************************
+//   (C) 2022 Christophe de Dinechin <christophe@dinechin.org>
+//   This software is licensed under the terms outlined in LICENSE.txt
+// ****************************************************************************
+//   This file is part of DB48X.
+//
+//   DB48X is free software: you can redistribute it and/or modify
+//   it under the terms outlined in the LICENSE.txt file
+//
+//   DB48X is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ****************************************************************************
+//
+// clang-format off
+//
+// Commands, e.g. "swap"
+#ifndef CMD
+#define CMD(id)                 ID(id)
+#endif
+
+// Commands with a long name, e.g. "neg" can be called "Negate"
+#ifndef NAMED
+#define NAMED(id, longname)     CMD(id)
+#endif
+
+// Operators, e.g. "+", where the name is valid both in long and short form
+#ifndef OP
+#define OP(id, name)            NAMED(id, name)
+#endif
+
+// Aliases for commands with multiple spelling (there can be multiple aliases)
+#ifndef ALIAS
+#define ALIAS(op, name)
+#endif
+
+#ifndef MENU
+#define MENU(id)                ID(id)
+#endif
+
+#ifndef UNIT_MENU
+#define UNIT_MENU(id)           ID(id)
+#endif
+
+#ifndef CONSTANT_MENU
+#define CONSTANT_MENU(id)       ID(id)
+#endif
+
+#ifndef EQUATION_MENU
+#define EQUATION_MENU(id)       ID(id)
+#endif
+
+#ifndef LIBRARY_MENU
+#define LIBRARY_MENU(id)        ID(id)
+#endif
+
+#ifndef CHARACTER_MENU
+#define CHARACTER_MENU(id)      ID(id)
+#endif
+
+#ifndef ID_RANGE
+#define ID_RANGE(name, ...)
+#endif
+
+#ifndef FLAG
+#define FLAG(Enable, Disable)                                           \
+    ID(Enable) ID(Disable)
+#endif // FLAG
+
+#ifndef SETTING
+#define SETTING(Name, Low, High, Init)                                  \
+        ID(Name)
+#endif
+
+#ifndef SETTING_BITS
+#define SETTING_BITS(Name,Type,Bits,Low,High,Init) SETTING(Name,Low,High,Init)
+#endif
+
+#ifndef SETTING_VALUE
+#define SETTING_VALUE(Name, Alias, Base, Value) NAMED(Name, Alias)
+#endif
+
+#ifndef SETTING_ENUM
+#define SETTING_ENUM(Name, Alias, Base)         \
+    SETTING_VALUE(Name, Alias, Base, ID_##Name)
+#endif
+
+
+// ============================================================================
+//
+//   Range of types for attributes
+//
+// ============================================================================
+
+ID_RANGE(is_type,          directory,      bitmap)
+#if CONFIG_FIXED_BASED_OBJECTS
+ID_RANGE(is_integer,       hex_integer,    neg_integer)
+ID_RANGE(is_based,         hex_integer,    based_integer, hex_bignum, based_bignum)
+ID_RANGE(is_bignum,        hex_bignum,     neg_bignum)
+#else
+ID_RANGE(is_integer,       based_integer,  neg_integer)
+ID_RANGE(is_based,         based_integer,  based_integer, based_bignum, based_bignum)
+ID_RANGE(is_bignum,        based_bignum,   neg_bignum)
+#endif // CONFIG_FIXED_BASED_OBJECTS
+ID_RANGE(is_fraction,      fraction,       neg_big_fraction)
+ID_RANGE(is_decimal,       decimal,        neg_decimal)
+ID_RANGE(is_real,          bignum,         neg_decimal)
+ID_RANGE(is_complex,       rectangular,    polar)
+ID_RANGE(is_program_cmd,   Drop,           IfErrThenElse)
+ID_RANGE(is_command,       Drop,           ToFraction,    ToList, LastMenu)
+ID_RANGE(is_symbolic,      expression,     constant,      polynomial, polynomial)
+ID_RANGE(is_algebraic_fn,  add,            ToFraction,    asinh, det)
+ID_RANGE(is_immediate,     MainMenu,       SelfInsert)
+ID_RANGE(is_unit,          unit,           unit)
+ID_RANGE(is_plot,          Function,       Parametric)
+ID_RANGE(is_program,       program,        funcall)
+ID_RANGE(is_graph,         grob,           bitmap)
+
+
+
+// ============================================================================
+//
+//   Definition of types
+//
+// ============================================================================
+
+ID(object)                      // Value 0 is reserved for "not implemented"
+
+
+ID(directory)
+ID(text)
+ID(list)
+ID(program)
+ID(block)                       // Blocks, e.g. inside loops
+ID(locals)                      // Block with locals
+ID(expression)                  // Algebraic expressions
+ID(funcall)                     // Function call (in algebraics)
+ID(local)
+ID(symbol)
+ID(constant)
+ID(equation)
+ID(xlib)
+ID(array)
+ID(menu)
+
+ID(unit)
+
+// Complex types must be parsed before numbers
+ID(rectangular)
+ID(polar)
+
+#if CONFIG_FIXED_BASED_OBJECTS
+ID(hex_integer)
+ID(dec_integer)
+ID(oct_integer)
+ID(bin_integer)
+#endif // CONFIG_FIXED_BASED_OBJECTS
+ID(based_integer)
+
+#if CONFIG_FIXED_BASED_OBJECTS
+ID(hex_bignum)
+ID(dec_bignum)
+ID(oct_bignum)
+ID(bin_bignum)
+#endif // CONFIG_FIXED_BASED_OBJECTS
+ID(based_bignum)
+
+ID(bignum)
+ID(neg_bignum)
+
+ID(integer)
+ID(neg_integer)
+
+ID(fraction)
+ID(neg_fraction)
+ID(big_fraction)
+ID(neg_big_fraction)
+
+ID(hwfloat)
+ID(hwdouble)
+ID(decimal)
+ID(neg_decimal)
+
+ID(comment)
+ID(grob)
+ID(bitmap)
+
+// Stack commands
+CMD(Drop)
+CMD(Drop2)
+CMD(DropN)
+NAMED(Dup,  "Duplicate")
+NAMED(Dup2, "Duplicate2")
+NAMED(DupN, "DuplicateN")
+CMD(Swap)
+CMD(Over)
+CMD(Pick)
+CMD(Rot)
+CMD(Roll)
+NAMED(RollD, "RollDown")
+CMD(Depth)
+
+// Variables
+NAMED(Sto, "Store")
+NAMED(Rcl, "Recall")
+CMD(Purge)
+
+// Evaluation and rendering
+NAMED(Eval, "Evaluate")
+NAMED(ToText, "→Text") ALIAS(ToText, "ToStr")           ALIAS(ToText, "→Str")
+
+// Arithmetic and basic operations
+OP(add, "+")                    ALIAS(add, "+")
+OP(sub, "-")                    ALIAS(sub, "-")
+OP(mul, "×")                    ALIAS(mul, "·")         ALIAS(mul, "*")
+OP(div, "÷")                    ALIAS(div, "/")
+CMD(mod)
+CMD(rem)
+OP(pow, "↑")                    ALIAS(pow, "Power")     ALIAS(pow, "^")
+
+NAMED(neg, "Negate")
+CMD(abs)                        ALIAS(abs, "norm") ALIAS(abs, "modulus") ALIAS(abs, "abs")
+NAMED(inv, "x⁻¹")
+NAMED(sqrt, "√")                ALIAS(sqrt, "SquareRoot")
+NAMED(sq,  "x²")                ALIAS(sq,   "Square")
+NAMED(cubed, "x³")
+
+// Logical
+CMD(True)
+CMD(False)
+OP(And,         "and")
+OP(Or,          "or")
+OP(Xor,         "xor")
+OP(Not,         "not")
+
+// Tests
+CMD(same)                       // HP48 distinguishes == and same
+OP(TestSame, "==")           // Must be before =
+OP(TestLT,   "<")
+OP(TestEQ,   "=")
+OP(TestGT,   ">")
+OP(TestLE,   "≤")
+OP(TestNE,   "≠")
+OP(TestGE,   "≥")
+
+// Trigonometric functions
+NAMED(asin, "sin⁻¹")            // WARNING: order used in functions.cc
+NAMED(acos,  "cos⁻¹")
+NAMED(atan,  "tan⁻¹")
+CMD(sin)
+CMD(cos)
+CMD(tan)                        // WARNING: order used in function.cc
+
+// Exp and log
+NAMED(log, "ln")
+CMD(exp)
+CMD(log10)
+CMD(exp10)
+ALIAS(exp10, "alog")
+
+// Conversions
+NAMED(ToDecimal, "→Num")
+ALIAS(ToDecimal, "→Decimal")
+NAMED(ToFraction, "→ℚ")         ALIAS(ToFraction, "→Frac")
+                                ALIAS(ToFraction, "→Q") // Last algebr.
+
+
+// ============================================================================
+//
+//    Loops and tests (won't parse)
+//
+// ============================================================================
+
+CMD(IfThen)
+CMD(IfThenElse)
+CMD(DoUntil)
+CMD(WhileRepeat)
+CMD(StartNext)
+CMD(StartStep)
+CMD(ForNext)
+CMD(ForStep)
+CMD(CaseStatement)
+CMD(CaseThen)
+CMD(CaseWhen)
+
+
+
+// ============================================================================
+//
+//   Non-algebraic commands below (cannot go in equations)
+//
+// ============================================================================
+
+// Data processing
+NAMED(ToList, "→List")
+NAMED(Explode, "Object→") ALIAS(Explode, "FromObj") ALIAS(Explode, "Obj→")
+CMD(Get)
+CMD(Put)
+CMD(Size)
+CMD(Sort)
+
+// Tests
+NAMED(IFT, "IfThen")
+NAMED(IFTE, "IfThenElse")
+CMD(SetFlag)                            ALIAS(SetFlag,          "SF")
+CMD(ClearFlag)                          ALIAS(ClearFlag,        "CF")
+CMD(TestFlagSet)                        ALIAS(TestFlagSet,      "FS?")
+CMD(TestFlagClear)                      ALIAS(TestFlagClear,    "FC?")
+
+// Graphics
+NAMED(Disp, "DrawText")
+NAMED(ClLCD, "ClearLCD")
+
+
+// ****************************************************************************
+//
+//   Two byte opcodes below
+//
+// ****************************************************************************
+
+
+// ============================================================================
+//
+//   Rarely used algebraics (two-byte opcodes)
+//
+// ============================================================================
+
+NAMED(asinh, "sinh⁻¹")
+NAMED(acosh, "cosh⁻¹")
+NAMED(atanh, "tanh⁻¹")
+CMD(sinh)
+CMD(cosh)
+CMD(tanh)
+
+CMD(log1p)      ALIAS(log1p, "lnp1")            // HP48 compatibility
+CMD(expm1)      ALIAS(expm1, "expm")            // HP48 compatibility
+CMD(log2)
+CMD(exp2)       ALIAS(exp2, "alog2")
+CMD(erf)
+CMD(erfc)
+NAMED(tgamma, "Gamma")
+NAMED(lgamma, "LogGamma")
+NAMED(fact, "x!")               ALIAS(fact, "factorial") ALIAS(fact, "!")
+NAMED(comb, "Combinations")
+NAMED(perm, "Permutations")
+NAMED(Sum, "Σ")
+NAMED(Product, "∏")
+
+NAMED(cbrt, "∛")        ALIAS(cbrt, "CubeRoot")
+OP(hypot, "⊿")          ALIAS(hypot, "Hypothenuse")
+OP(atan2, "∠")
+CMD(xroot)
+
+CMD(sign)
+NAMED(IntPart,          "IntegerPart")          ALIAS(IntPart,  "IP")
+NAMED(FracPart,         "FractionalPart")       ALIAS(FracPart, "FP")
+CMD(ceil)
+CMD(floor)
+CMD(Round)                                      ALIAS(Round, "RND")
+CMD(Truncate)                                   ALIAS(Truncate, "TRNC")
+NAMED(mant,             "Mantissa")
+NAMED(xpon,             "Exponent")
+OP(Percent,             "%")
+NAMED(PercentChange,    "%Change")              ALIAS(PercentChange, "%Ch")
+NAMED(PercentTotal,     "%Total")               ALIAS(PercentChange, "%T")
+CMD(Min)
+CMD(Max)
+
+CMD(re)
+CMD(im)
+CMD(arg)
+CMD(conj)
+NAMED(det, "Determinant")
+
+
+
+// ============================================================================
+//
+//   Graphing and plotting
+//
+// ============================================================================
+
+CMD(PlotParameters)     ALIAS(PlotParameters, "PPar")
+CMD(Equation)           ALIAS(Equation, "eq")
+
+NAMED(DispXY,           "DrawStyledText")
+NAMED(PixOn,            "DrawPixel")
+NAMED(PixOff,           "DrawBackgroundPixel")
+NAMED(PixTest,          "PixelGrayLevel")       ALIAS(PixTest, "Pix?")
+NAMED(PixColor,         "PixelColor")           ALIAS(PixColor, "PixC?")
+NAMED(Line,             "DrawLine")
+NAMED(Ellipse,          "DrawEllipse")
+NAMED(Circle,           "DrawCircle")
+NAMED(Rect,             "DrawRectangle")
+NAMED(RRect,            "DrawRoundedRectangle")
+NAMED(Draw,             "DrawPlot")
+NAMED(Drax,             "DrawAxes")
+
+NAMED(Function,         "FunctionPlot")
+NAMED(Polar,            "PolarPlot")
+NAMED(Parametric,       "ParametricPlot")
+NAMED(Scatter,          "ScatterPlot")
+NAMED(Bar,              "BarPlot")
+
+CMD(Clip)
+CMD(CurrentClip)
+
+NAMED(Gray,             "GrayPattern")          ALIAS(Gray,     "GreyPattern")
+                                                ALIAS(Gray,     "Grey")
+NAMED(RGB,              "RGBPattern")
+
+NAMED(ToGrob,           "→Graphic")             ALIAS(ToGrob, "→Grob")
+NAMED(GXor,             "GraphicXor")
+NAMED(GOr,              "GraphicOr")
+NAMED(GAnd,             "GraphicAnd")
+NAMED(Pict,             "GraphicPicture")
+
+CMD(PlotMin)                                    ALIAS(PlotMin, "PMin")
+CMD(PlotMax)                                    ALIAS(PlotMax, "PMax")
+NAMED(XRange,           "PlotXRange")           ALIAS(XRange,  "XRng")
+NAMED(YRange,           "PlotYRange")           ALIAS(YRange,  "YRng")
+NAMED(Scale,            "PlotScale")
+NAMED(XScale,           "PlotScaleX")           ALIAS(XScale, "ScaleX") ALIAS(XScale, "ScaleH")
+NAMED(YScale,           "PlotScaleY")           ALIAS(YScale, "ScaleY") ALIAS(YScale, "ScaleW")
+NAMED(Center,           "PlotCenter")           ALIAS(Center, "Centr")
+
+CMD(Beep)
+
+
+
+// ============================================================================
+//
+//   Rarely used commands (two bytes)
+//
+// ============================================================================
+
+// Memory management
+CMD(PurgeAll)
+NAMED(Mem, "AvailableMemory")
+CMD(FreeMemory)
+CMD(SystemMemory)
+CMD(GarbageCollect)             ALIAS(GarbageCollect, "GC")
+CMD(Clone)                      ALIAS(Clone, "NewObject")
+                                ALIAS(Clone, "NewObj")
+                                ALIAS(Clone, "NewOb")
+
+// Object commands
+NAMED(Compile, "Text→")         ALIAS(Compile, "Str→")
+
+// Flags
+CMD(FlipFlag)                   ALIAS(FlipFlag,               "FF")
+CMD(TestFlagClearThenClear)     ALIAS(TestFlagClearThenClear, "FC?C")
+CMD(TestFlagClearThenSet)       ALIAS(TestFlagClearThenSet,   "FC?S")
+CMD(TestFlagSetThenClear)       ALIAS(TestFlagSetThenClear,   "FS?C")
+CMD(TestFlagSetThenSet)         ALIAS(TestFlagSetThenSet,     "FS?S")
+CMD(FlagsToBinary)              ALIAS(FlagsToBinary,          "RclF")
+CMD(BinaryToFlags)              ALIAS(BinaryToFlags,          "StoF")
+
+// Directories
+NAMED(home, "HomeDirectory")
+CMD(CurrentDirectory)
+NAMED(path, "DirectoryPath")
+NAMED(crdir, "CreateDirectory")
+NAMED(updir, "UpDirectory")
+NAMED(pgdir, "PurgeDirectory")
+
+/// Equations
+NAMED(MatchUp,   "↑Match")
+NAMED(MatchDown, "↓Match")
+CMD(Expand)                     ALIAS(Expand, "Expan")
+CMD(Collect)
+CMD(FoldConstants)
+CMD(ReorderTerms)
+CMD(Simplify)
+NAMED(ToPolynomial, "→Polynomial")    ALIAS(ToPolynomial, "→Poly")
+NAMED(FromPolynomial, "Polynomial→")  ALIAS(FromPolynomial, "Poly→")
+
+// Complex numbers
+NAMED(RealToRectangular, "ℝ→ℂ")
+ALIAS(RealToRectangular, "RealToComplex")
+ALIAS(RealToRectangular, "R→C")
+NAMED(RealToPolar, "ℝ→Polarℂ")
+ALIAS(RealToPolar, "R→P")
+NAMED(RectangularToReal, "ℂ→ℝ")
+ALIAS(RectangularToReal, "ComplexToReal")
+ALIAS(RectangularToReal, "C→R")
+NAMED(PolarToReal, "Polarℂ→ℝ")
+ALIAS(PolarToReal, "P→R")
+NAMED(ToRectangular, "→Rectangular")
+ALIAS(ToRectangular, "→Rectℂ")
+NAMED(ToPolar, "→Polar")
+ALIAS(ToPolar, "→Polarℂ")
+
+// Rare tests
+NAMED(errm, "ErrorMessage")
+NAMED(errn, "ErrorNumber")
+NAMED(err0, "ClearError")
+NAMED(doerr, "DoError")
+
+
+
+// ============================================================================
+//
+//   Rare functions
+//
+// ============================================================================
+//   These functions are put "late" in the IDs table to leave more room
+//   for single-byte commands above
+
+// Rare type functions
+NAMED(ToTag, "→Tag")
+NAMED(FromTag, "Tag→")
+NAMED(dtag, "DeleteTag")
+
+// Object cycle (often used from keyboard, rarely in programs)
+CMD(Cycle)
+CMD(RealToBinary)                       ALIAS(RealToBinary, "R→B")
+CMD(BinaryToReal)                       ALIAS(BinaryToReal, "B→R")
+OP(ToHMS,       "→HMS")
+OP(FromHMS,     "HMS→")
+OP(HMSAdd,      "HMS+")
+OP(HMSSub,      "HMS-")
+OP(ToDMS,       "→DMS")
+OP(FromDMS,     "DMS→")
+OP(DMSAdd,      "DMS+")
+OP(DMSSub,      "DMS-")
+OP(DateAdd,     "Date+")
+OP(DateSub,     "DDays")
+OP(JulianDayNumber, "JDN")
+OP(DateFromJulianDayNumber, "JDN→")
+
+// Angles
+OP(RadiansToDegrees, "Radians→Degrees") ALIAS(RadiansToDegrees, "R→D")
+OP(DegreesToRadians, "Degrees→Radians") ALIAS(DegreesToRadians, "D→R")
+OP(ToDegrees,   "→Degrees")             ALIAS(ToDegrees, "→Deg")
+OP(ToRadians,   "→Radians")             ALIAS(ToRadians, "→Rad")
+OP(ToGrads,     "→Grads")               ALIAS(ToGrads,   "→Grad")
+OP(ToPiRadians, "→PiRadians")           ALIAS(ToDegrees, "→πr")
+
+// Timing and system commands
+CMD(Date)
+OP(SetDate, "→Date")
+CMD(Time)
+OP(SetTime, "→Time")
+CMD(DateTime)
+CMD(ChronoTime)
+CMD(TimedEval)                          ALIAS(TimedEval, "TEval")
+CMD(Ticks)
+CMD(Wait)
+CMD(Bytes)
+CMD(Type)
+CMD(TypeName)
+CMD(Version)
+CMD(ScreenCapture)
+
+// High-level applications
+CMD(Root)
+NAMED(Integrate, "∫")
+
+// Additional list and data sorting functions
+NAMED(FromList, "List→")
+CMD(QuickSort)
+CMD(ReverseSort)
+CMD(ReverseQuickSort)
+CMD(ReverseList)                        ALIAS(ReverseList, "RevList")
+CMD(Head)
+CMD(Tail)
+CMD(Map)
+CMD(Reduce)                             ALIAS(Reduce, "Stream")
+CMD(Filter)
+OP(ListSum, "ΣList")
+OP(ListProduct, "∏List")
+OP(ListDifferences, "∆List")
+NAMED(GetI, "GetIteration")
+NAMED(PutI, "PutIteration")
+
+// Arithmetic store and recall operations
+OP(StoreAdd,    "Store+")               ALIAS(StoreAdd,  "Sto+")
+OP(StoreSub,    "Store-")               ALIAS(StoreSub,  "Sto-")
+OP(StoreMul,    "Store×")               ALIAS(StoreMul,  "Store*")
+ALIAS(StoreMul, "Sto*")                 ALIAS(StoreMul,  "Sto×")
+OP(StoreDiv,    "Store÷")               ALIAS(StoreDiv,  "Store/")
+ALIAS(StoreDiv, "Sto/")                 ALIAS(StoreDiv,  "Sto÷")
+OP(RecallAdd,   "Recall+")              ALIAS(RecallAdd, "Rcl+")
+OP(RecallSub,   "Recall-")              ALIAS(RecallSub, "Rcl-")
+OP(RecallMul,   "Recall×")              ALIAS(RecallMul, "Recall*")
+ALIAS(RecallMul,"Rcl*")                 ALIAS(RecallMul, "Rcl×")
+OP(RecallDiv,   "Recall÷")              ALIAS(RecallDiv, "Recall/")
+ALIAS(RecallDiv,"Rcl/")                 ALIAS(RecallDiv, "Rcl÷")
+CMD(Increment)                          ALIAS(Increment, "Incr")
+CMD(Decrement)                          ALIAS(Decrement, "Decr")
+
+// Bitwise operations
+NAMED(RL, "RotateLeft")
+NAMED(RR, "RotateRight")
+NAMED(RLB, "RotateLeftByte")
+NAMED(RRB, "RotateRightByte")
+NAMED(SL, "ShiftLeft")
+NAMED(SR, "ShiftRight")
+NAMED(SLB, "ShiftLeftByte")
+NAMED(SRB, "ShiftRightByte")
+NAMED(ASR, "ArithmeticShiftRight")
+NAMED(ASRB, "ArithmeticShiftRightByte")
+
+NAMED(RLC, "RotateLeftCount")
+NAMED(RRC, "RotateRightCount")
+NAMED(SLC, "ShiftLeftCount")
+NAMED(SRC, "ShiftRightCount")
+NAMED(ASRC, "ArithmeticShiftRightCount")
+
+CMD(SetBit)
+CMD(ClearBit)
+CMD(FlipBit)
+
+// Binary operations
+OP(NAnd,        "nand")
+OP(NOr,         "nor")
+OP(Implies,     "implies")
+OP(Equiv,       "equiv")
+OP(Excludes,    "excludes")
+
+// Characters
+NAMED(CharToUnicode, "Char→Code")       ALIAS(CharToUnicode, "Codepoint")
+                                        ALIAS(CharToUnicode, "Num")
+NAMED(UnicodeToText, "Code→Text")       ALIAS(UnicodeToText, "Code→Char")
+                                        ALIAS(UnicodeToText, "Chr")
+NAMED(TextToUnicode, "Text→Code")
+
+// On-line help
+CMD(Help)
+
+// Debugging
+CMD(Halt)
+CMD(Debug)
+ALIAS(Debug, "dbug")
+CMD(SingleStep)
+ALIAS(SingleStep, "sst")
+CMD(StepOver)
+CMD(StepOut)
+CMD(MultipleSteps)
+CMD(Continue)
+ALIAS(Continue, "cont")
+CMD(Kill)
+
+// Unit conversions
+CMD(Convert)
+NAMED(UBase, "BaseUnits")
+NAMED(UVal,  "UnitValue")
+NAMED(UFact,  "FactorUnit")
+NAMED(ToUnit,  "→Unit")
+CMD(ApplyUnit)
+CMD(ConvertToUnit)
+CMD(ApplyInverseUnit)
+CMD(ConvertToUnitPrefix)
+
+// Constants, equations and program library
+CMD(ConstantName)
+CMD(ConstantValue)
+CMD(EquationName)
+CMD(EquationValue)
+CMD(XlibName)
+CMD(XlibValue)
+
+// Last things and stack
+NAMED(LastArg, "LastArguments")
+CMD(LastX)
+OP(ClearStack, "Clear")
+CMD(Nip)
+CMD(Pick3)
+CMD(UnPick)
+CMD(UnRot)
+NAMED(NDupN, "NDuplicateN")
+CMD(Show)
+
+
+// ============================================================================
+//
+//   Statistics
+//
+// ============================================================================
+
+OP(StatsData,           "ΣData")        ALIAS(StatsData,                "ΣDat")
+OP(StatsParameters,     "ΣParameters")  ALIAS(StatsParameters,          "ΣPar")
+
+OP(AddData,             "Σ+")
+OP(RemoveData,          "Σ-")
+OP(RecallData,          "RecallΣ")      ALIAS(RecallData,               "RclΣ")
+OP(StoreData,           "StoreΣ")       ALIAS(StoreData,                "StoΣ")
+OP(ClearData,           "ClearΣ")       ALIAS(ClearData,                "ClΣ")
+CMD(Average) ALIAS(Average, "Avg")      ALIAS(Average,                  "Mean")
+CMD(Median)
+OP(MinData,             "MinΣ")
+OP(MaxData,             "MaxΣ")
+OP(DataSize,            "ΣSize")        ALIAS(DataSize,                 "NΣ")
+OP(SumOfX,              "ΣX")
+OP(SumOfY,              "ΣY")
+OP(SumOfXY,             "ΣXY")
+OP(SumOfXSquares,       "ΣX²")          ALIAS(SumOfXSquares,            "ΣX2")
+OP(SumOfYSquares,       "ΣY²")          ALIAS(SumOfYSquares,            "ΣY2")
+CMD(Variance)                           ALIAS(Variance,                 "Var")
+CMD(Correlation)                        ALIAS(Correlation,              "Corr")
+CMD(Covariance)                         ALIAS(Covariance,               "Cov")
+CMD(StandardDeviation)                  ALIAS(StandardDeviation,        "SDev")
+CMD(FrequencyBins)                      ALIAS(FrequencyBins,            "Bins")
+CMD(PopulationVariance)                 ALIAS(PopulationVariance,       "PVar")
+CMD(PopulationStandardDeviation)        ALIAS(PopulationStandardDeviation, "PSDev")
+CMD(PopulationCovariance)               ALIAS(PopulationCovariance,     "PCov")
+CMD(Total)                              ALIAS(Total,                    "Tot")
+CMD(IndependentColumn)                  ALIAS(IndependentColumn,        "XCol")
+CMD(DependentColumn)                    ALIAS(DependentColumn,          "YCol")
+NAMED(DataColumns,      "ColΣ")
+CMD(Intercept)
+CMD(Slope)
+CMD(LinearRegression)                   ALIAS(LinearRegression,         "LR")
+CMD(BestFit)
+CMD(LinearFit)                          ALIAS(LinearFit,                "LinFit")
+CMD(ExponentialFit)                     ALIAS(ExponentialFit,           "ExpFit")
+CMD(PowerFit)                           ALIAS(PowerFit,                 "PwrFit")
+CMD(LogarithmicFit)                     ALIAS(LogarithmicFit,           "LogFit")
+
+
+
+// ============================================================================
+//
+//   Settings
+//
+// ============================================================================
+
+CMD(Modes)
+CMD(ResetModes)
+
+// Default (flag clear) is on the right
+FLAG(NoStackSave,               SaveStack)
+FLAG(NoLastArguments,           SaveLastArguments)
+FLAG(ProgramLastArguments,      NoProgramLastArguments)
+FLAG(PrincipalSolution,         AllSolutions)
+FLAG(NumericalConstants,        SymbolicConstants)
+FLAG(NumericalResults,          SymbolicResults)
+FLAG(CarefulEvaluation,         LazyEvaluation)
+FLAG(NoAutoSimplify,            AutoSimplify)
+FLAG(ComplexResults,            RealResults)
+FLAG(IgnorePrecisionLoss,       ReportPrecisionLoss)
+FLAG(UnderflowError,            UnderflowValue)
+FLAG(OverflowError,             OverflowValue)
+FLAG(InfinityValue,             InfinityError)
+FLAG(UndefinedValue,            UndefinedError)
+FLAG(NegativeUnderflowIndicator,NoNegativeUnderflow)
+FLAG(PositiveUnderflowIndicator,NoPositiveUnderflow)
+FLAG(OverflowIndicator,         NoOverflow)
+FLAG(InfiniteResultIndicator,   NoInfiniteResult)
+FLAG(UndefinedResultIndicator,  NoUndefinedResult)
+FLAG(ClassicExponent,           FancyExponent)
+FLAG(ImproperFractions,         MixedFractions)
+FLAG(BigFractions,              SmallFractions)
+FLAG(DecimalComma,              DecimalDot)
+FLAG(NoTrailingDecimal,         TrailingDecimal)
+FLAG(NoLeadingZero,             LeadingZero)
+FLAG(ShowBuiltinUnits,          HideBuiltinUnits)
+FLAG(ShowBuiltinConstants,      HideBuiltinConstants)
+FLAG(ShowBuiltinCharacters,     HideBuiltinCharacters)
+FLAG(HideEquationBody,          ShowEquationBody)
+FLAG(SquareMenus,               RoundedMenus)
+FLAG(TextStackDisplay,          GraphicStackDisplay)
+FLAG(TextResultDisplay,         GraphicResultDisplay)
+FLAG(SingleLineResult,          MultiLineResult)
+FLAG(MultiLineStack,            SingleLineStack)
+FLAG(NoStackAutoScale,          AutoScaleStack)
+FLAG(StoreAtEnd,                StoreAtStart)
+FLAG(HideDate,                  ShowDate)
+FLAG(HideTime,                  ShowTime)
+FLAG(ShowSeconds,               HideSeconds)
+FLAG(Time12H,                   Time24H)
+FLAG(HideMonthName,             ShowMonthName)
+FLAG(MonthBeforeDay,            DayBeforeMonth)
+FLAG(YearFirst,                 YearLast)
+FLAG(TwoDigitYear,              FourDigitYear)
+FLAG(HideDayOfWeek,             ShowDayOfWeek)
+FLAG(HideVoltage,               ShowVoltage)
+FLAG(BeepOff,                   BeepOn)
+FLAG(SilentBeepOn,              SilentBeepOff)
+FLAG(LinearFitSums,             CurrentFitSums)
+FLAG(NoPlotAxes,                DrawPlotAxes)
+FLAG(NoCurveFilling,            CurveFilling)
+FLAG(CompatibleGROBs,           PackedBitmaps)
+FLAG(ZeroOverZeroIsUndefined,   ZeroOverZeroIsError)
+FLAG(ZeroPowerZeroIsUndefined,  ZeroPowerZeroIsOne)
+FLAG(OnesComplement,            TwosComplement)
+FLAG(DetailedTypes,             CompatibleTypes)
+FLAG(IndexWrapped,              IndexDidNotWrap)
+FLAG(TooManyDigitsErrors,       NoErrorForTooManyDigits)
+FLAG(ComplexIBeforeImaginary,   ComplexIAfterImaginary)
+FLAG(NumberedVariables,         NoNumberedVariables)
+FLAG(UseCrossForMultiplication, UseDotForMultiplication)
+FLAG(HardwareFloatingPoint,     SoftwareFloatingPoint)
+FLAG(NoAngleUnits,              SetAngleUnits)
+FLAG(VerticalLists,             HorizontalLists)
+FLAG(VerticalVectors,           HorizontalVectors)
+FLAG(NeedToClearErrors,         NoNeedToClearErrors)
+FLAG(VerticalProgramRendering,  HorizontalProgramRendering)
+FLAG(StepByStepAlgebraResults,  FinalAlgebraResults)
+FLAG(ExplicitWildcards,         ImplicitWildcards)
+FLAG(PrefixPolynomialRender,    NormalPolynomialRender)
+FLAG(DistinguishSymbolCase,     IgnoreSymbolCase)
+
+
+ALIAS(HardwareFloatingPoint,    "HFP")
+ALIAS(HardwareFloatingPoint,    "HardFP")
+ALIAS(SoftwareFloatingPoint,    "SFP")
+ALIAS(SoftwareFloatingPoint,    "SoftFP")
+
+SETTING_ENUM(Std, "StandardDisplay",    DisplayMode)
+SETTING_ENUM(Sig, "SignificantDisplay", DisplayMode)
+SETTING_ENUM(Fix, "FixedDisplay",       DisplayMode)
+SETTING_ENUM(Sci, "ScientificDisplay",  DisplayMode)
+SETTING_ENUM(Eng, "EngineeringDisplay", DisplayMode)
+SETTING_BITS(DisplayMode, id,   3,      ID_Std, ID_Sig,         ID_Std)
+SETTING(DisplayDigits,                  0, DB48X_MAXDIGITS,     (uint16_t)  12)
+SETTING(StandardExponent,               0, DB48X_MAXDIGITS,     (uint16_t)   9)
+SETTING(Precision,                      3, DB48X_MAXDIGITS,     (uint16_t)  24)
+SETTING(MinimumSignificantDigits,      -1, DB48X_MAXDIGITS,      (int16_t)   3)
+SETTING_BITS(MantissaSpacing, uint, 4,  0, 15,                  3)
+SETTING_BITS(FractionSpacing, uint, 4,  0, 15,                  5)
+SETTING_BITS(BasedSpacing,    uint, 4,  0, 15,                  4)
+
+SETTING_ENUM(Deg, "Degrees",            AngleMode)
+SETTING_ENUM(Rad, "Radians",            AngleMode)
+SETTING_ENUM(Grad, "Grads",             AngleMode)
+SETTING_ENUM(PiRadians, "πradians",     AngleMode)
+SETTING_BITS(AngleMode, id, 2,          ID_Deg, ID_PiRadians,   ID_Deg)
+
+SETTING_ENUM(LowerCase,   "LowerCaseCommands",          CommandDisplayMode)
+SETTING_ENUM(UpperCase,   "UpperCaseCommands",          CommandDisplayMode)
+SETTING_ENUM(Capitalized, "CapitalizedCommands",        CommandDisplayMode)
+SETTING_ENUM(LongForm,    "LongFormCommands",           CommandDisplayMode)
+SETTING_BITS(CommandDisplayMode,id, 2,  ID_LowerCase, ID_LongForm, ID_LongForm)
+
+SETTING_ENUM(LowerCaseNames,   "LowerCaseSymbols",      NameDisplayMode)
+SETTING_ENUM(UpperCaseNames,   "UpperCaseSymbols",      NameDisplayMode)
+SETTING_ENUM(CapitalizedNames, "CapitalizedSymbols",    NameDisplayMode)
+SETTING_ENUM(LongFormNames,    "LongFormSymbols",       NameDisplayMode)
+SETTING_BITS(NameDisplayMode,id, 2,  ID_LowerCaseNames, ID_LongFormNames, ID_LongFormNames)
+
+SETTING_VALUE(Bin, "Binary",            Base, 2)
+SETTING_VALUE(Oct, "Octal",             Base, 8)
+SETTING_VALUE(Dec, "Decimal",           Base, 10)
+SETTING_VALUE(Hex, "Hexadecimal",       Base, 16)
+SETTING_BITS(Base, uint,  6,            2, 36, 16)
+
+SETTING_BITS(ResultFont,          settings::font_id, 4,   settings::FIRST_FONT, settings::LAST_FONT, settings::STACK)
+SETTING_BITS(StackFont,           settings::font_id, 4,   settings::FIRST_FONT, settings::LAST_FONT, settings::STACK)
+SETTING_BITS(EditorFont,          settings::font_id, 4,   settings::FIRST_FONT, settings::LAST_FONT, settings::STACK)
+SETTING_BITS(MultilineEditorFont, settings::font_id, 4,   settings::FIRST_FONT, settings::LAST_FONT, settings::STACK)
+SETTING_BITS(CursorFont,          settings::font_id, 4,   settings::FIRST_FONT, settings::LAST_FONT, settings::HELP)
+SETTING_BITS(MultilineCursorFont, settings::font_id, 4,   settings::FIRST_FONT, settings::LAST_FONT, settings::HELP)
+
+SETTING_ENUM(NumberSpaces,      nullptr,        NumberSeparatorCommand)
+SETTING_ENUM(NumberDotOrComma,  nullptr,        NumberSeparatorCommand)
+SETTING_ENUM(NumberTicks,       nullptr,        NumberSeparatorCommand)
+SETTING_ENUM(NumberUnderscore,  nullptr,        NumberSeparatorCommand)
+SETTING_BITS(NumberSeparatorCommand, id, 2, ID_NumberSpaces, ID_NumberUnderscore, ID_NumberSpaces)
+SETTING_ENUM(BasedSpaces,       nullptr,        BasedSeparatorCommand)
+SETTING_ENUM(BasedDotOrComma,   nullptr,        BasedSeparatorCommand)
+SETTING_ENUM(BasedTicks,        nullptr,        BasedSeparatorCommand)
+SETTING_ENUM(BasedUnderscore,   nullptr,        BasedSeparatorCommand)
+SETTING_BITS(BasedSeparatorCommand,  id, 2, ID_BasedSpaces,  ID_BasedUnderscore,  ID_BasedSpaces)
+
+SETTING(WordSize,               1U, 256U * 1024U,       64U)
+ALIAS(WordSize,                 "stws")
+OP(RecallWordSize,              "rcws")
+SETTING(MaxNumberBits,          1U, 256U * 1024U,      4096U)
+SETTING(MaxFlags,               8U, 32768U,             128U)
+SETTING(MaxRewrites,            1U, 10000U,             100U)
+SETTING(FractionIterations,     1U, 10000U,             10U)
+ALIAS(FractionIterations,       "→QIterations")
+SETTING_BITS(FractionDigits,  uint, 6,1U, DB48X_MAXDIGITS, 12U)
+ALIAS(FractionDigits,           "→QDigits")
+SETTING(SolverIterations,       1U, 10000U,             256U)
+SETTING_BITS(SolverPrecision, uint, 6,1U, DB48X_MAXDIGITS-2,  24U)
+SETTING(IntegrateIterations,    1U, 10000U,             100U)
+SETTING(IntegratePrecision,     0U, DB48X_MAXDIGITS,    12U)
+SETTING(MaximumDecimalExponent, 10ULL, ularge(1ULL << 61), ularge(1ULL << 60))
+
+SETTING_ENUM(SingleRowMenus,    nullptr,        MenuAppearance)
+SETTING_ENUM(FlatMenus,         nullptr,        MenuAppearance)
+SETTING_ENUM(ThreeRowsMenus,    nullptr,        MenuAppearance)
+SETTING_BITS(MenuAppearance, id, 2, ID_SingleRowMenus, ID_ThreeRowsMenus, ID_ThreeRowsMenus)
+
+SETTING_BITS(LineWidth, uint, 8,0,  255,                1)
+SETTING(CursorBlinkRate,        10, 10000,              500)
+
+SETTING(Background,             ularge(0), ~ularge(0), ~ularge(0))
+SETTING(Foreground,             ularge(0), ~ularge(0),  ularge(0))
+SETTING(StackBackground,        ularge(0), ~ularge(0), ~ularge(0))
+SETTING(StackForeground,        ularge(0), ~ularge(0),  ularge(0))
+SETTING(StackLevelBackground,   ularge(0), ~ularge(0), ~ularge(0))
+SETTING(StackLevelForeground,   ularge(0), ~ularge(0),  ularge(0))
+SETTING(StackLineForeground,    ularge(0), ~ularge(0),  ularge(0xAAAAAAAAAAAAAAAAULL))
+SETTING(ResultBackground,       ularge(0), ~ularge(0), ~ularge(0))
+SETTING(ResultForeground,       ularge(0), ~ularge(0),  ularge(0))
+SETTING(EditorBackground,       ularge(0), ~ularge(0), ~ularge(0))
+SETTING(EditorForeground,       ularge(0), ~ularge(0),  ularge(0))
+SETTING(EditorLineForeground,   ularge(0), ~ularge(0),  ularge(0xAAAAAAAAAAAAAAAAULL))
+SETTING(ErrorBackground,        ularge(0), ~ularge(0), ~ularge(0))
+SETTING(ErrorForeground,        ularge(0), ~ularge(0),  ularge(0))
+SETTING(ErrorBorder,            ularge(0), ~ularge(0),  ularge(0xAAAAAAAAAAAAAAAAULL))
+SETTING(SelectionBackground,    ularge(0), ~ularge(0),  ularge(0))
+SETTING(SelectionForeground,    ularge(0), ~ularge(0), ~ularge(0))
+SETTING(CursorSelBackground,    ularge(0), ~ularge(0),  ularge(0))
+SETTING(CursorBackground,       ularge(0), ~ularge(0),  ularge(0))
+SETTING(CursorForeground,       ularge(0), ~ularge(0), ~ularge(0))
+SETTING(CursorBorder,           ularge(0), ~ularge(0),  ularge(0))
+SETTING(CursorAlphaBackground,  ularge(0), ~ularge(0), ~ularge(0))
+SETTING(CursorAlphaForeground,  ularge(0), ~ularge(0),  ularge(0))
+SETTING(CursorAlphaBorder,      ularge(0), ~ularge(0),  ularge(0))
+SETTING(SearchBackground,       ularge(0), ~ularge(0), ~ularge(0))
+SETTING(SearchForeground,       ularge(0), ~ularge(0), ~ularge(0))
+SETTING(CommandBackground,      ularge(0), ~ularge(0),  ularge(0))
+SETTING(CommandForeground,      ularge(0), ~ularge(0), ~ularge(0))
+SETTING(UserCommandBackground,  ularge(0), ~ularge(0), ~ularge(0))
+SETTING(UserCommandBorder,      ularge(0), ~ularge(0),  ularge(0))
+SETTING(UserCommandForeground,  ularge(0), ~ularge(0),  ularge(0))
+SETTING(MenuBackground,         ularge(0), ~ularge(0), ~ularge(0))
+SETTING(RoundMenuBackground,    ularge(0), ~ularge(0),  ularge(0))
+SETTING(RoundMenuForeground,    ularge(0), ~ularge(0), ~ularge(0))
+SETTING(SquareMenuBackground,   ularge(0), ~ularge(0), ~ularge(0))
+SETTING(SquareMenuForeground,   ularge(0), ~ularge(0),  ularge(0))
+SETTING(SelectedMenuForeground, ularge(0), ~ularge(0),  ularge(0))
+SETTING(SkippedMenuBackground,  ularge(0), ~ularge(0),  ularge(0xAAAAAAAAAAAAAAAAULL))
+SETTING(FolderCornerForeground, ularge(0), ~ularge(0), ~ularge(0))
+SETTING(UnimplementedForeground,ularge(0), ~ularge(0),  ularge(0xAAAAAAAAAAAAAAAAULL))
+SETTING(HeaderBackground,       ularge(0), ~ularge(0),  ularge(0))
+SETTING(DateForeground,         ularge(0), ~ularge(0), ~ularge(0))
+SETTING(TimeForeground,         ularge(0), ~ularge(0), ~ularge(0))
+SETTING(StateNameForeground,    ularge(0), ~ularge(0), ~ularge(0))
+SETTING(RunningIconForeground,  ularge(0), ~ularge(0), ~ularge(0))
+SETTING(SteppingIconForeground, ularge(0), ~ularge(0), ~ularge(0))
+SETTING(HaltedIconForeground,   ularge(0), ~ularge(0), ~ularge(0))
+SETTING(GCIconForeground,       ularge(0), ~ularge(0), ~ularge(0))
+SETTING(LeftShiftBackground,    ularge(0), ~ularge(0), ~ularge(0))
+SETTING(LeftShiftForeground,    ularge(0), ~ularge(0),  ularge(0))
+SETTING(RightShiftBackground,   ularge(0), ~ularge(0), ~ularge(0))
+SETTING(RightShiftForeground,   ularge(0), ~ularge(0),  ularge(0))
+SETTING(AlphaForeground,        ularge(0), ~ularge(0), ~ularge(0))
+SETTING(LowerAlphaForeground,   ularge(0), ~ularge(0), ~ularge(0))
+SETTING(BatteryForeground,      ularge(0), ~ularge(0), ~ularge(0))
+SETTING(BatteryBackground,      ularge(0), ~ularge(0),  ularge(0))
+SETTING(VoltageForeground,      ularge(0), ~ularge(0), ~ularge(0))
+SETTING(BatteryLevelForeground, ularge(0), ~ularge(0), ~ularge(0))
+SETTING(HalfBatteryForeground,  ularge(0), ~ularge(0), ~ularge(0))
+SETTING(LowBatteryForeground,   ularge(0), ~ularge(0), ~ularge(0))
+SETTING(ChargingForeground,     ularge(0), ~ularge(0), ~ularge(0))
+
+SETTING_ENUM(DateSlash,         nullptr,        DateSeparatorCommand)
+SETTING_ENUM(DateDash,          nullptr,        DateSeparatorCommand)
+SETTING_ENUM(DateDot,           nullptr,        DateSeparatorCommand)
+SETTING_ENUM(DateSpace,         nullptr,        DateSeparatorCommand)
+SETTING_BITS(DateSeparatorCommand, id, 2, ID_DateSlash, ID_DateSpace, ID_DateSlash)
+SETTING(PlotRefreshRate,        50U,    1000000U,       500U)
+
+SETTING(MaximumShowWidth,       LCD_W, 16384U,   1280U)
+SETTING(MaximumShowHeight,      LCD_W, 16384U,   1280U)
+ALIAS(MaximumShowWidth,  "MaxW")
+ALIAS(MaximumShowHeight, "MaxH")
+
+SETTING(EditorWrapColumn,       0U, 1000000U, 20U)
+SETTING(TabWidth,               1U, 200U, 30U)
+
+SETTING(ErrorBeepFrequency,     0, 25000,       1400)
+SETTING(ErrorBeepDuration,      0, 500,         50)
+
+
+
+// ============================================================================
+//
+//    CAS configuration
+//
+// ============================================================================
+
+
+OP(AlgebraConfiguration,   "Ⓓ")        ALIAS(AlgebraConfiguration,  "CASDir")
+OP(AlgebraVariable,        "ⓧ")        ALIAS(AlgebraVariable,       "VX")
+                                        ALIAS(AlgebraVariable,       "RclVX")
+OP(StoreAlgebraVariable,   "Storeⓧ")   ALIAS(StoreAlgebraVariable,  "StoVX")
+
+
+
+// ============================================================================
+//
+//   Special commands
+//
+// ============================================================================
+
+NAMED(Off, "PowerOff")
+CMD(SaveState)
+CMD(SystemSetup)
+
+CMD(Unimplemented)              // Last command in catalog
+
+CMD(VariablesMenuExecute)
+CMD(VariablesMenuRecall)
+CMD(VariablesMenuStore)
+
+
+
+
+// ============================================================================
+//
+//   Menus
+//
+// ============================================================================
+
+
+MENU(MainMenu)
+
+MENU(MathMenu)
+MENU(RealMenu)
+MENU(PartsMenu)
+MENU(FractionsMenu)
+MENU(PowersMenu)
+MENU(ComplexMenu)
+MENU(VectorMenu)
+MENU(MatrixMenu)
+MENU(AnglesMenu)
+MENU(HyperbolicMenu)
+MENU(ExpLogMenu)
+MENU(CircularMenu)
+MENU(BasesMenu)
+MENU(ProbabilitiesMenu)
+MENU(NumbersMenu)
+MENU(DebugMenu)
+MENU(StatisticsMenu)
+MENU(RegressionMenu)
+MENU(PopulationMenu)
+MENU(SignalProcessingMenu)
+MENU(ConstantsMenu)
+MENU(EquationsMenu)
+MENU(Library)
+MENU(UnitsMenu)
+MENU(UnitsConversionsMenu)
+MENU(SymbolicMenu)
+MENU(AlgebraMenu)
+MENU(ArithmeticMenu)
+MENU(CalculationMenu)
+MENU(TrigIdentitiesMenu)
+MENU(ExpLogIdentitiesMenu)
+MENU(IntegrationMenu)
+MENU(DifferentiationMenu)
+MENU(SolverMenu)
+MENU(PolynomialsMenu)
+MENU(NumericalSolverMenu)
+MENU(DifferentialSolverMenu)
+MENU(SymbolicSolverMenu)
+MENU(PolynomialSolverMenu)
+MENU(LinearSolverMenu)
+MENU(MultiSolverMenu)
+MENU(FinanceSolverMenu)
+
+MENU(ProgramMenu)
+MENU(TestsMenu)
+MENU(CompareMenu)
+MENU(LoopsMenu)
+MENU(ListMenu)
+MENU(StackMenu)
+MENU(ClearThingsMenu)
+MENU(ObjectMenu)
+MENU(FlagsMenu)
+MENU(CharactersMenu)
+MENU(ModesMenu)
+MENU(DisplayModesMenu)
+MENU(SeparatorModesMenu)
+MENU(UserInterfaceModesMenu)
+MENU(MathModesMenu)
+MENU(PrintingMenu)
+MENU(IOMenu)
+MENU(FilesMenu)
+MENU(TimeMenu)
+MENU(DateMenu)
+MENU(AlarmMenu)
+MENU(PlotMenu)
+MENU(GraphicsMenu)
+MENU(MemoryMenu)
+MENU(TextMenu)
+
+// Special menus
+MENU(EditMenu)
+CMD(VariablesMenu)
+CMD(ToolsMenu)
+CMD(Catalog)
+
+CMD(Undo)                       // Immediate: do not save stack before Undo
+CMD(LastMenu)                   // Last parseable command
+
+
+
+// ============================================================================
+//
+//  Unit menus (not parseable, do not show up in catalog)
+//
+// ============================================================================
+
+#define UNIT_MENUS(Base)                        \
+    UNIT_MENU(Base##0)                          \
+    UNIT_MENU(Base##1)                          \
+    UNIT_MENU(Base##2)                          \
+    UNIT_MENU(Base##3)                          \
+    UNIT_MENU(Base##4)                          \
+    UNIT_MENU(Base##5)                          \
+    UNIT_MENU(Base##6)                          \
+    UNIT_MENU(Base##7)                          \
+    UNIT_MENU(Base##8)                          \
+    UNIT_MENU(Base##9)
+
+UNIT_MENUS(UnitMenu0)
+UNIT_MENUS(UnitMenu1)
+UNIT_MENUS(UnitMenu2)
+UNIT_MENUS(UnitMenu3)
+UNIT_MENUS(UnitMenu4)
+UNIT_MENUS(UnitMenu5)
+UNIT_MENUS(UnitMenu6)
+UNIT_MENUS(UnitMenu7)
+UNIT_MENUS(UnitMenu8)
+UNIT_MENUS(UnitMenu9)
+
+#define CONSTANT_MENUS(Base)                    \
+    CONSTANT_MENU(Base##0)                      \
+    CONSTANT_MENU(Base##1)                      \
+    CONSTANT_MENU(Base##2)                      \
+    CONSTANT_MENU(Base##3)                      \
+    CONSTANT_MENU(Base##4)                      \
+    CONSTANT_MENU(Base##5)                      \
+    CONSTANT_MENU(Base##6)                      \
+    CONSTANT_MENU(Base##7)                      \
+    CONSTANT_MENU(Base##8)                      \
+    CONSTANT_MENU(Base##9)
+
+CONSTANT_MENUS(ConstantsMenu0)
+CONSTANT_MENUS(ConstantsMenu1)
+CONSTANT_MENUS(ConstantsMenu2)
+CONSTANT_MENUS(ConstantsMenu3)
+CONSTANT_MENUS(ConstantsMenu4)
+CONSTANT_MENUS(ConstantsMenu5)
+CONSTANT_MENUS(ConstantsMenu6)
+CONSTANT_MENUS(ConstantsMenu7)
+CONSTANT_MENUS(ConstantsMenu8)
+CONSTANT_MENUS(ConstantsMenu9)
+
+#define EQUATION_MENUS(Base)                    \
+    EQUATION_MENU(Base##0)                      \
+    EQUATION_MENU(Base##1)                      \
+    EQUATION_MENU(Base##2)                      \
+    EQUATION_MENU(Base##3)                      \
+    EQUATION_MENU(Base##4)                      \
+    EQUATION_MENU(Base##5)                      \
+    EQUATION_MENU(Base##6)                      \
+    EQUATION_MENU(Base##7)                      \
+    EQUATION_MENU(Base##8)                      \
+    EQUATION_MENU(Base##9)
+
+EQUATION_MENUS(EquationsMenu0)
+EQUATION_MENUS(EquationsMenu1)
+EQUATION_MENUS(EquationsMenu2)
+EQUATION_MENUS(EquationsMenu3)
+EQUATION_MENUS(EquationsMenu4)
+EQUATION_MENUS(EquationsMenu5)
+EQUATION_MENUS(EquationsMenu6)
+EQUATION_MENUS(EquationsMenu7)
+EQUATION_MENUS(EquationsMenu8)
+EQUATION_MENUS(EquationsMenu9)
+
+#define LIBRARY_MENUS(Base)                    \
+    LIBRARY_MENU(Base##0)                      \
+    LIBRARY_MENU(Base##1)                      \
+    LIBRARY_MENU(Base##2)                      \
+    LIBRARY_MENU(Base##3)                      \
+    LIBRARY_MENU(Base##4)                      \
+    LIBRARY_MENU(Base##5)                      \
+    LIBRARY_MENU(Base##6)                      \
+    LIBRARY_MENU(Base##7)                      \
+    LIBRARY_MENU(Base##8)                      \
+    LIBRARY_MENU(Base##9)
+
+LIBRARY_MENUS(LibraryMenu0)
+LIBRARY_MENUS(LibraryMenu1)
+LIBRARY_MENUS(LibraryMenu2)
+LIBRARY_MENUS(LibraryMenu3)
+LIBRARY_MENUS(LibraryMenu4)
+LIBRARY_MENUS(LibraryMenu5)
+LIBRARY_MENUS(LibraryMenu6)
+LIBRARY_MENUS(LibraryMenu7)
+LIBRARY_MENUS(LibraryMenu8)
+LIBRARY_MENUS(LibraryMenu9)
+
+#define CHARACTER_MENUS(Base)                    \
+    CHARACTER_MENU(Base##0)                      \
+    CHARACTER_MENU(Base##1)                      \
+    CHARACTER_MENU(Base##2)                      \
+    CHARACTER_MENU(Base##3)                      \
+    CHARACTER_MENU(Base##4)                      \
+    CHARACTER_MENU(Base##5)                      \
+    CHARACTER_MENU(Base##6)                      \
+    CHARACTER_MENU(Base##7)                      \
+    CHARACTER_MENU(Base##8)                      \
+    CHARACTER_MENU(Base##9)
+
+CHARACTER_MENUS(CharactersMenu0)
+CHARACTER_MENUS(CharactersMenu1)
+CHARACTER_MENUS(CharactersMenu2)
+CHARACTER_MENUS(CharactersMenu3)
+CHARACTER_MENUS(CharactersMenu4)
+CHARACTER_MENUS(CharactersMenu5)
+CHARACTER_MENUS(CharactersMenu6)
+CHARACTER_MENUS(CharactersMenu7)
+CHARACTER_MENUS(CharactersMenu8)
+CHARACTER_MENUS(CharactersMenu9)
+
+
+// ============================================================================
+//
+//   Editor commands
+//
+// ============================================================================
+
+CMD(EditorSelect)
+CMD(EditorWordLeft)
+CMD(EditorWordRight)
+CMD(EditorBegin)
+CMD(EditorEnd)
+CMD(EditorCut)
+CMD(EditorCopy)
+CMD(EditorPaste)
+CMD(EditorSearch)
+CMD(EditorReplace)
+CMD(EditorClear)
+CMD(EditorFlip)
+
+// ============================================================================
+//
+//   Commands that we don't want to see appear in the catalog
+//
+// ============================================================================
+
+CMD(MenuNextPage)
+CMD(MenuPreviousPage)
+CMD(MenuFirstPage)
+
+
+// ============================================================================
+//
+//    Commands that won't parse
+//
+// ============================================================================
+
+CMD(IfErrThen)                  // Special tests
+CMD(IfErrThenElse)              // Last programmable command
+
+CMD(ReplaceChar)
+CMD(SelfInsert)                 // Last immediate command
+
+
+
+// ============================================================================
+//
+//   Special objects
+//
+// ============================================================================
+
+ID(font)
+ID(dense_font)
+ID(sparse_font)
+ID(dmcp_font)
+
+ID(tag)
+ID(polynomial)
+
+ID(conditional)
+ID(while_conditional)
+ID(start_next_conditional)
+ID(start_step_conditional)
+ID(for_next_conditional)
+ID(for_step_conditional)
+ID(case_then_conditional)
+ID(case_when_conditional)
+ID(case_skip_conditional)
+ID(case_end_conditional)
+
+#undef ID
+#undef OP
+#undef CMD
+#undef MENU
+#undef UNIT_MENU
+#undef CONSTANT_MENU
+#undef EQUATION_MENU
+#undef LIBRARY_MENU
+#undef CHARACTER_MENU
+#undef NAMED
+#undef ALIAS
+#undef ID_RANGE
+#undef FLAG
+#undef SETTING
+#undef SETTING_BITS
+#undef SETTING_ENUM
+#undef SETTING_VALUE

@@ -1,0 +1,135 @@
+// ****************************************************************************
+//  errors.tbl                                                    DB48X project
+// ****************************************************************************
+//
+//   File Description:
+//
+//    Table of errors
+//
+//
+//
+//
+//
+//
+//
+//
+// ****************************************************************************
+//   (C) 2022 Christophe de Dinechin <christophe@dinechin.org>
+//   This software is licensed under the terms outlined in LICENSE.txt
+// ****************************************************************************
+//   This file is part of DB48X.
+//
+//   DB48X is free software: you can redistribute it and/or modify
+//   it under the terms outlined in the LICENSE.txt file
+//
+//   DB48X is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// ****************************************************************************
+
+ERROR(unimplemented,            "Not yet implemented")
+ERROR(interrupted,              "Interrupted")
+ERROR(missing_argument,         "Too few arguments")
+ERROR(invalid_object,           "Invalid object")
+ERROR(out_of_memory,            "Out of memory")
+ERROR(syntax,                   "Syntax error")
+ERROR(infix_expected,           "Expected an operator")
+ERROR(prefix_expected,          "Expected a function")
+ERROR(argument_expected,        "Expected argument")
+ERROR(zero_divide,              "Divide by zero")
+ERROR(overflow,                 "Numerical overflow")
+ERROR(positive_underflow,       "Positive numerical underflow")
+ERROR(negative_underflow,       "Negative numerical underflow")
+ERROR(undefined_operation,      "Undefined operation")
+ERROR(type,                     "Bad argument type")
+ERROR(value,                    "Bad argument value")
+ERROR(index,                    "Index out of range")
+ERROR(dimension,                "Invalid dimension")
+ERROR(mantissa,                 "Too many digits")
+ERROR(exponent,                 "Malformed exponent")
+ERROR(exponent_range,           "Exponent out of range")
+ERROR(domain,                   "Argument outside domain")
+ERROR(based_number,             "Invalid based number")
+ERROR(based_digit,              "Invalid digit for base")
+ERROR(based_range,              "Based number is too big")
+ERROR(invalid_base,             "Invalid numeric base")
+ERROR(unterminated,             "Unterminated")
+ERROR(no_directory,             "No directory")
+ERROR(directory_path,           "Directory not in path")
+ERROR(name_exists,              "Name already exists")
+ERROR(invalid_name,             "Invalid name")
+ERROR(undefined_name,           "Undefined name")
+ERROR(recursion,                "Too many recursive calls")
+ERROR(return_without_caller,    "Return without a caller")
+ERROR(invalid_local,            "Invalid local")
+ERROR(malformed_directory,      "Malformed directory")
+ERROR(missing_variable,         "Expected variable name")
+ERROR(number_too_big,           "Number is too big")
+ERROR(too_many_rewrites,        "Too many rewrites")
+ERROR(invalid_stats_parameters, "Invalid ΣParameters")
+ERROR(invalid_stats_data,       "Invalid ΣData")
+ERROR(insufficient_stats_data,  "Insufficient ΣData")
+ERROR(invalid_ppar,             "Invalid plot parameters")
+ERROR(invalid_plot_type,        "Invalid plot type")
+ERROR(invalid_function,         "Invalid function")
+ERROR(invalid_plot_data,        "Invalid plot data")
+ERROR(constant_value,           "Constant?")
+ERROR(bad_guess,                "Bad guess?")
+ERROR(no_solution,              "No solution?")
+ERROR(inconsistent_units,       "Inconsistent units")
+ERROR(invalid_unit,             "Invalid unit (too big)")
+ERROR(invalid_algebraic,        "Invalid algebraic")
+ERROR(invalid_polynomial,       "Expression is not a polynomial")
+ERROR(invalid_equation,         "Not an equation or program")
+ERROR(invalid_constant,         "Invalid or unknown constant")
+ERROR(invalid_xlib,             "Invalid or unknown library entry")
+ERROR(misbehaving_program,      "Misbehaving program")
+ERROR(no_equation,              "EQ variable not found")
+ERROR(no_data,                  "ΣData variable not found")
+ERROR(malformed_local_program,  "Malformed local program")
+ERROR(invalid_setting,          "Invalid setting command")
+ERROR(not_programmable,         "Not a programmable command")
+ERROR(screenshot_capture,       "Screenshot capture failed")
+ERROR(unsupported_flag,         "Unsupported system flag")
+ERROR(precision_loss,           "Numerical precision lost")
+ERROR(invalid_date,             "Invalid date")
+ERROR(invalid_time,             "Invalid time")
+ERROR(graph_does_not_fit,       "Object does not fit in MaxW")
+ERROR(internal,                 "Internal error, please report")
+ERROR(invalid_path,             "Invalid path, access denied")
+ERROR(purge_active_directory,   "Cannot purge active directory")
+ERROR(invalid_bitmap_file,      "Invalid bitmap file")
+
+// Filesystem errors
+#ifndef FRROR
+#define FRROR(name, msg, sys)   ERROR(name, msg)
+#endif
+
+ERROR(file_name_too_long,       "File name is too long")
+ERROR(invalid_magic_number,     "Invalid magic number")
+ERROR(incompatible_binary,      "Incompatible binary file")
+ERROR(invalid_object_in_file,   "File contains no valid object")
+ERROR(unable_to_allocate,       "Unable to allocate object")
+
+FRROR(disk_io_error,            "I/O error",                    DISK_ERR)
+FRROR(disk_assertion_failed,    "FatFS assertion failed",       INT_ERR)
+FRROR(disk_not_ready,           "FAT disk not ready",           NOT_READY)
+FRROR(file_not_found,           "File not found",               NO_FILE)
+FRROR(path_not_found,           "Path not found",               NO_PATH)
+FRROR(invalid_file_name,        "Invalid file name",            INVALID_NAME)
+FRROR(file_access_denied,       "File access denied",           DENIED)
+FRROR(file_already_exists,      "File exists",                  EXIST)
+FRROR(invalid_file_object,      "Invalid file object",          INVALID_OBJECT)
+FRROR(write_protected,          "File is write-protected",      WRITE_PROTECTED)
+FRROR(invalid_drive,            "Invalid drive number",         INVALID_DRIVE)
+FRROR(file_not_enabled,         "File/volume is not enabled",   NOT_ENABLED)
+FRROR(no_filesystem,            "No valid filesystem",          NO_FILESYSTEM)
+FRROR(file_system_not_created,  "Filesystem was not created",   MKFS_ABORTED)
+FRROR(file_system_timeout,      "Timeout accessing the file",   TIMEOUT)
+FRROR(file_locked,              "File is locked",               LOCKED)
+FRROR(file_out_of_memory,       "File system out of memory",    NOT_ENOUGH_CORE)
+FRROR(too_many_open_files,      "Too many open files",          TOO_MANY_OPEN_FILES)
+FRROR(invalid_file_parameter,   "Invalid file parameter",       INVALID_PARAMETER)
+
+#undef ERROR
+#undef FRROR
