@@ -21,6 +21,9 @@
         flex-direction: row;
         align-items: center; 
         justify-items: center;
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
       }
 
       canvas {
@@ -69,7 +72,7 @@
     document.getElementsByTagName('body')[0].onscroll = function(event) {
       event.preventDefault();
     };
-    
+
     const DEBUG = false;
     const SIM_LCD_H = 240; // Height of the LCD
     const SIM_LCD_SCANLINE = 416; // Width of the LCD scanline
@@ -78,6 +81,9 @@
     const WORD_SIZE = 32; // Size of the word in bits
     const MASK = (1 << BPP) - 1; // Mask to extract BPP bits
     const KB_RATIO = 1.3; // Keyboard aspect ratio
+    let keyBuffer = []; // keyBuffer
+    let threadSince = 0;
+    let threadInterval = 100; // 100ms
 
     // Keyboard mapping with key areas
     const key_map = [
@@ -166,13 +172,24 @@
             // should use html elements for the keys in future
             for (let i=0; i<key_map.length; i++) {
               if (x > key_map[i][1]*KEY_W && x < key_map[i][2]*KEY_W && y > key_map[i][3]*KEY_H && y < key_map[i][4]*KEY_H) {
+                if (DEBUG) {
                 console.log("clicked:", key_map[i][0]);
-                Module.ui_push_key(key_map[i][0]);
-                Module.ui_push_key(0);
-                Module.run_rpl(); // don't think this is needed
+                }
+                keyBuffer.push(key_map[i][0]);
               }
             }
         }
+
+        const processKey = function() {
+          if (keyBuffer.length > 0) {
+                let key = keyBuffer.shift(); 
+                if (DEBUG) {
+                  console.log("processed key:", key);
+                }
+                Module.ui_push_key(key);
+                Module.ui_push_key(0);
+                }
+        } 
         
         // add an event listener to the canvas so we can parse the key presses
         canvas_key.addEventListener("mousedown", function (e) {
@@ -237,23 +254,21 @@
           drawBitmap('lcdCanvas', lcd_buffer, SIM_LCD_SCANLINE, SIM_LCD_H);
         }
 
-        // run the lcd thread
-        const lcdThread = setInterval(()=>{
-          getLCD();
-        }, 100);
-        
-        // run the rpl thread
-        const rpnThread = setInterval(()=>{
-          Module.run_rpl();
-        }, 100);
+        // thread to draw the LCD and run the calculator
+        const drawThread = function() {
+          let now = new Date().getTime();
+          let dt = now - threadSince;  
+          processKey();
+          if (dt > threadInterval) {
+            Module.run_rpl();
+            getLCD();
+            threadSince = now;
+          }
+          window.requestAnimationFrame(drawThread);
+        }
 
-        // both threads should run on a requestAnimationFrame() - future use
-        // const step = function(timeStamp) {
-        //   getLCD();
-        //   // Module.run_rpl()
-        //   window.requestAnimationFrame(step);
-        // }
-        // window.requestAnimationFrame(step);
+        window.requestAnimationFrame(drawThread);
+
         
       }
     </script>
