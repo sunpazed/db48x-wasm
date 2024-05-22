@@ -69,10 +69,26 @@
     </div>
 
 <script>
+
+    // disable scrolling
     document.getElementsByTagName('body')[0].onscroll = function(event) {
       event.preventDefault();
     };
 
+    // parse URL for any attributes
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+
+    // change the kb image based on the mode
+    if (mode) {
+      let kc = document.getElementById("keyCanvas");
+      if (kc) {
+        // console.log("mode: ", mode);
+        kc.style.setProperty("background-image", "url('keyboard-dm42-lrg.png')");
+      }
+    }
+
+    // globals
     const DEBUG = false;
     const SIM_LCD_H = 240; // Height of the LCD
     const SIM_LCD_SCANLINE = 416; // Width of the LCD scanline
@@ -84,6 +100,7 @@
     let keyBuffer = []; // keyBuffer
     let threadSince = 0;
     let threadInterval = 50; // 50ms
+    let threadCanvas;
 
     // Keyboard mapping with key areas
     const key_map = [
@@ -228,6 +245,25 @@
           }
         }
 
+        const drawKey = function(key) {
+          const ctx_key = canvas_key.getContext('2d');        
+          if (threadCanvas) {
+            clearTimeout(threadCanvas);
+            ctx_key.clearRect( 0, 0, KEY_W, KEY_H);
+          }
+          ctx_key.strokeStyle = "#fcd34e";
+          ctx_key.beginPath();
+            ctx_key.moveTo(key_map[key][1]*KEY_W, key_map[key][3]*KEY_H);
+            ctx_key.lineTo(key_map[key][1]*KEY_W, key_map[key][4]*KEY_H);
+            ctx_key.lineTo(key_map[key][2]*KEY_W, key_map[key][4]*KEY_H);
+            ctx_key.lineTo(key_map[key][2]*KEY_W, key_map[key][3]*KEY_H);
+            ctx_key.lineTo(key_map[key][1]*KEY_W, key_map[key][3]*KEY_H);
+            ctx_key.stroke();
+            threadCanvas = setTimeout(() => {
+              ctx_key.clearRect( 0, 0, KEY_W, KEY_H);
+            }, 500);
+          }
+
         // get the mouse/touch position
         const getMousePosition = function(canvas, event) {
             let rect = canvas.getBoundingClientRect();
@@ -240,9 +276,10 @@
             for (let i=0; i<key_map.length; i++) {
               if (x > key_map[i][1]*KEY_W && x < key_map[i][2]*KEY_W && y > key_map[i][3]*KEY_H && y < key_map[i][4]*KEY_H) {
                 if (DEBUG) {
-                console.log("clicked:", key_map[i][0]);
+                  console.log("clicked:", key_map[i][0]);
                 }
                 keyBuffer.push(key_map[i][0]);
+                drawKey(i);
               }
             }
         }
