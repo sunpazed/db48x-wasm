@@ -83,7 +83,7 @@
     const KB_RATIO = 1.3; // Keyboard aspect ratio
     let keyBuffer = []; // keyBuffer
     let threadSince = 0;
-    let threadInterval = 100; // 100ms
+    let threadInterval = 50; // 50ms
 
     // Keyboard mapping with key areas
     const key_map = [
@@ -138,6 +138,73 @@
             [ 36, 0.62,  0.74,  0.89,  0.97  ], // Qt::Key_Question,
             [ 37, 0.81,  0.95,  0.89,  0.97  ], // Qt::Key_Plus,    
         ];
+
+        const keystroke_map = {
+          "0": 34,
+          "1": 29,
+          "2": 30,
+          "3": 31,
+          "4": 24,
+          "5": 25,
+          "6": 26,
+          "7": 19,
+          "8": 20,
+          "9": 21,
+          ".": 35,
+          "+": 37,
+          "-": 32,
+          "*": 27,
+          "/": 22,
+          "'": 6,
+          "=": 36,
+          " ": 36,
+          "`": 1,
+          "Alt": 1,
+          "Meta": 1,
+          "Enter": 13,
+          "Backspace": 17,
+          "Escape": 33,
+          "F1": 38,
+          "F2": 39,
+          "F3": 40,
+          "F4": 41,
+          "F5": 42,
+          "F6": 43,
+          "Up": 18,
+          "Down": 23,
+          "Shift": 28,
+          "Control": 28,
+          "a": 1,
+          "b": 2,
+          "c": 3,
+          "d": 4,
+          "e": 5,
+          "f": 6,
+          "g": 7,
+          "h": 8,
+          "i": 9,
+          "j": 10,
+          "k": 11,
+          "l": 12,
+          "m": 14,
+          "n": 15,
+          "o": 16,
+          "p": 36,
+          "q": 20,
+          "r": 21,
+          "s": 22,
+          "t": 24,
+          "u": 25,
+          "v": 26,
+          "w": 27,
+          "x": 29,
+          "y": 30,
+          "z": 31,
+          "ArrowLeft": 18,
+          "ArrowRight": 23,
+          "ArrowUp": 18,
+          "ArrowDown": 23,
+        };
 
         // canvas for the keyboard
         const canvas_key = document.getElementById('keyCanvas');
@@ -195,6 +262,18 @@
         canvas_key.addEventListener("mousedown", function (e) {
             getMousePosition(canvas_key, e);
         }); 
+
+        // add an event listener to the canvas so we can parse the key presses
+        document.addEventListener("keyup", (event)=>{
+          // check that event.key matches a key in the keystroke_map
+          if (Object.keys(keystroke_map).includes(event.key)) {
+            keyBuffer.push(keystroke_map[event.key]);
+          } else {
+            if (DEBUG) {
+              console.log("Key not found in keystroke_map: ", event.key);
+            }
+          }
+        });
 
         // draw the LCD panel
         const canvas = document.getElementById('lcdCanvas');
