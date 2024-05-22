@@ -88,6 +88,21 @@
       }
     }
 
+    // toggle keyboard via double tap
+    document.getElementById('lcdCanvas').ondblclick = function(event) {
+      event.preventDefault();
+      let kc = document.getElementById("keyCanvas");
+      if (kc) {
+        // fetch the current background image
+        let kbtype = kc.style.getPropertyValue("background-image");
+        if (kbtype.includes("dm42")) {
+          kc.style.setProperty("background-image", "url('keyboard-db48x.png')");
+        } else {
+          kc.style.setProperty("background-image", "url('keyboard-dm42-lrg.png')");
+        }
+      }
+    };    
+
     // globals
     const DEBUG = false;
     const SIM_LCD_H = 240; // Height of the LCD
