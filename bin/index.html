@@ -58,6 +58,7 @@
         flex-direction: column;
         align-items: center;
         justify-items: center;
+        padding-bottom: 15%;
       }   
 
     </style>
@@ -118,7 +119,7 @@
     let threadCanvas;
 
     // Keyboard mapping with key areas
-    const key_map = [
+    const key_map_ = [
             [ 38, 0.03,  0.15,  0.03,  0.10  ], // Qt::Key_F1,      
             [ 39, 0.20,  0.32,  0.03,  0.10  ], // Qt::Key_F2,      
             [ 40, 0.345, 0.47,  0.03,  0.10  ], // Qt::Key_F3,      
@@ -237,6 +238,15 @@
           "ArrowUp": 18,
           "ArrowDown": 23,
         };
+
+        let key_map = [];
+
+        // we create a keymap that is slightly larger than the actual original keymap
+        // this helps with the touch events
+        for (let i=0; i<key_map_.length; i++) {
+          let offset = 0.015;
+          key_map.push([key_map_[i][0], key_map_[i][1]-offset, key_map_[i][2]+offset, key_map_[i][3]-offset, key_map_[i][4]+offset]);
+        }
 
         // canvas for the keyboard
         const canvas_key = document.getElementById('keyCanvas');
